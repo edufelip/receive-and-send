@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Section for Sending a Command -->
+        <EditText
+            android:id="@+id/etSendIndex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Enter send index (0-9)"
+            android:inputType="number" />
+        <Button
+            android:id="@+id/btnSendCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send IR Code"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Section for Registering a Command -->
+        <EditText
+            android:id="@+id/etRegisterIndex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Enter register index (0-9)"
+            android:inputType="number"
+            android:layout_marginTop="32dp"/>
+        <Button
+            android:id="@+id/btnRegisterCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Register IR Command"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
+</ScrollView>
