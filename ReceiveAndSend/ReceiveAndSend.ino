@@ -4,7 +4,6 @@
 #include "PinDefinitionsAndMore.h"
 #include <IRremote.hpp>
 
-// --- IR code variables and functions (your original code) ---
 #define RAW_BUFFER_LENGTH 750
 #define MARK_EXCESS_MICROS 20
 
@@ -22,8 +21,7 @@ struct storedIRDataStruct {
 void storeCode(IRData *aIRReceivedData, int index);
 void sendCode(storedIRDataStruct *aIRDataToSend);
 
-// --- Global variable for registration mode ---
-volatile int registerIndex = -1; // When >= 0, next received IR command is stored at this index
+volatile int registerIndex = -1;
 
 void setupIR() {
   pinMode(pinLED, OUTPUT);
@@ -35,11 +33,9 @@ void setupIR() {
 }
 
 void loopIR() {
-  // Allow both serial-based and HTTP-triggered IR registration
   static int index = -1;
   static int estadoAtual = 0;
 
-  // Serial commands for IR mode (optional, as before)
   if (Serial.available()) {
     char recebido = Serial.read();
     if (recebido == '#') {
@@ -59,7 +55,6 @@ void loopIR() {
     }
   }
 
-  // If in HTTP registration mode, override the index
   if (registerIndex >= 0) {
     estadoAtual = 1;
     index = registerIndex;
@@ -69,27 +64,23 @@ void loopIR() {
     IrReceiver.start();
   }
 
-  // If sending mode (HTTP or Serial)
   if (estadoAtual == 2 && index >= 0) {
     IrReceiver.stop();
-    Serial.println(F("Enviando..."));
+    Serial.println(WiFi.localIP());
     digitalWrite(STATUS_PIN, HIGH);
     sendCode(&sStoredIRData[index]);
     digitalWrite(STATUS_PIN, LOW);
     index = -1;
-    // Reset mode after sending
     estadoAtual = 0;
     registerIndex = -1;
   }
 
-  // If in registration mode, capture the next IR signal and store it.
   if (estadoAtual == 1 && IrReceiver.available()) {
     Serial.print(F("Registrando comando no slot "));
     Serial.println(index);
     storeCode(IrReceiver.read(), index);
     IrReceiver.resume();
     digitalWrite(pinLED, LOW);
-    // Clear registration mode
     registerIndex = -1;
     estadoAtual = 0;
   }
@@ -121,7 +112,7 @@ void storeCode(IRData *aIRReceivedData, int index) {
     for (uint16_t i = 0; i < len; i++) {
       int16_t rawValue = IrReceiver.decodedIRData.rawDataPtr->rawbuf[i + 1];
       uint16_t value = abs(rawValue);
-      if ((i % 2) == 0) {  // mark
+      if ((i % 2) == 0) {
         if (value > MARK_EXCESS_MICROS) {
           value -= MARK_EXCESS_MICROS;
         }
@@ -152,13 +143,11 @@ void sendCode(storedIRDataStruct *aIRDataToSend) {
   }
 }
 
-// --- New: WiFi & HTTP Server functionality ---
-const char* ssid     = "YourSSID";         // Change to your WiFi network name
-const char* password = "YourPassword";     // Change to your WiFi password
+const char* ssid     = "";
+const char* password = "";
 
 WebServer server(80);
 
-// HTTP handler to send an IR code
 void handleSendCode() {
   if (server.hasArg("index")) {
     int index = server.arg("index").toInt();
@@ -166,18 +155,15 @@ void handleSendCode() {
       server.send(400, "text/plain", "Invalid index. Use 0-9.");
       return;
     }
-    // Stop IR receiving before sending
     IrReceiver.stop();
     sendCode(&sStoredIRData[index]);
     server.send(200, "text/plain", "IR Code sent.");
-    // Optionally restart IR receiver if you want to record again
     IrReceiver.start();
   } else {
     server.send(400, "text/plain", "Missing 'index' parameter.");
   }
 }
 
-// HTTP handler to register an IR command
 void handleRegisterCode() {
   if (server.hasArg("index")) {
     int index = server.arg("index").toInt();
@@ -185,8 +171,7 @@ void handleRegisterCode() {
       server.send(400, "text/plain", "Invalid index. Use 0-9.");
       return;
     }
-    registerIndex = index;  // Set registration mode
-    // Optionally provide visual feedback via the LED here
+    registerIndex = index;
     digitalWrite(pinLED, HIGH);
     server.send(200, "text/plain", ("Registration mode activated for slot " + String(index) + ". Press the remote button now.").c_str());
     Serial.print(F("Registration mode activated for slot "));
@@ -225,6 +210,5 @@ void setup() {
 
 void loop() {
   server.handleClient();
-  // Continue processing IR operations:
   loopIR();
 }

@@ -11,7 +11,7 @@ import java.io.IOException
 class MainActivity : AppCompatActivity() {
 
     private val client = OkHttpClient()
-    private val esp32BaseUrl = "http://192.168.1.50"
+    private val esp32BaseUrl = "http://192.168.15.52"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,14 +50,14 @@ class MainActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object: Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Toast.makeText(this@MainActivity, "Request Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "Falha na requisição: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     if (response.isSuccessful) {
-                        Toast.makeText(this@MainActivity, "IR Code enviado com sucesso!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, "Comando enviado com sucesso!", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(this@MainActivity, "Erro: ${response.code}", Toast.LENGTH_SHORT).show()
                     }
@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread {
                     if (response.isSuccessful) {
-                        Toast.makeText(this@MainActivity, "Comando registrado com sucesso", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@MainActivity, "Pressione o botão do controle para registar", Toast.LENGTH_LONG).show()
                     } else {
                         Toast.makeText(this@MainActivity, "Erro: ${response.code}", Toast.LENGTH_SHORT).show()
                     }

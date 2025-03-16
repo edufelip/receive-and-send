@@ -11,18 +11,17 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Section for Sending a Command -->
         <EditText
             android:id="@+id/etSendIndex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Enter send index (0-9)"
+            android:hint="Insira o número do comando (0-9)"
             android:inputType="number" />
         <Button
             android:id="@+id/btnSendCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send IR Code"
+            android:text="Enviar comando"
             android:layout_marginTop="16dp"/>
 
         <!-- Section for Registering a Command -->
@@ -30,14 +29,14 @@
             android:id="@+id/etRegisterIndex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Enter register index (0-9)"
+            android:hint="Insira o número do comando (0-9)"
             android:inputType="number"
             android:layout_marginTop="32dp"/>
         <Button
             android:id="@+id/btnRegisterCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Register IR Command"
+            android:text="Registrar comando"
             android:layout_marginTop="16dp"/>
     </LinearLayout>
 </ScrollView>
